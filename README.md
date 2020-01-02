@@ -16,3 +16,12 @@ Todo:
 	Have arbitrages sent out to all clients(Hoang) automatically
 
 someone help me reformat lmao
+
+Alpha Version 1.0.0 screenshots 
+
+
+ ![Best365_Odds.csv](link-to-image)
+
+ ![sportsbet_Odds.csv](link-to-image)
+
+ ![ArbitageCalculator.cpp](link-to-image)
