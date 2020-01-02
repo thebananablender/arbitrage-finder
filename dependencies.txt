@@ -8,3 +8,4 @@ requests
 
 selenium
 chromedriver.exe
+chrome
