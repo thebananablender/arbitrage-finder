@@ -14,3 +14,5 @@ Todo:
 		-do an odds change comparison and re-evaluate	
 		-send warnings
 	Have arbitrages sent out to all clients(Hoang) automatically
+
+someone help me reformat lmao
