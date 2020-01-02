@@ -1,0 +1,10 @@
+List of things we need to install:
+
+beautifulsoup4
+lxml
+html5lib
+requests
+
+
+selenium
+chromedriver.exe
