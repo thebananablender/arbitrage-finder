@@ -10,9 +10,6 @@ Todo:
 	Paste the new html into the code/have the code request the new html
 	Automate to for all games, and only need to run once.
 	Have the program run by itself – every few hours?
-	Warning for if odds change – ask Hoang abt this first
-		-do an odds change comparison and re-evaluate	
-		-send warnings
 	Have arbitrages sent out to all clients(Hoang) automatically
 
 someone help me reformat lmao
