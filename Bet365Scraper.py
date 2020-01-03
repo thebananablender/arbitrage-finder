@@ -37,7 +37,7 @@ points = points_Container.find_all(class_ = "gl-ParticipantCenteredStacked_Handi
 with open('bet365_Odds.csv','w') as csv_file:
 	csv_writer = writer(csv_file)
 	
-	csv_writer.writerow(game_name.get_text())
+	csv_writer.writerow([game_name.get_text()])
 
 	count = 0
 	for i in range(len(odds)//2):
