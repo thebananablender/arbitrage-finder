@@ -49,7 +49,6 @@ int main(int argc, char const *argv[])
 	ifstream file2("bet365_Odds.csv");
 
 	getline(file2,game,'\n');
-	game.erase(remove(game.begin(), game.end(), ','), game.end());
 
 	string name2;
 	string over_Odd2;
