@@ -1,5 +1,10 @@
 # arbitrage-finder
 Description
+	An arbitrage bet is a type of bet which can guarantee you profit. \
+	However, finding these bets is tedious. \
+	Arbitrage-finder goes onto Australian bookmaking websites and saves \
+	you the trouble of finding and calculating these yourselves. \
+	So all you have to do is make the bet. \
 
 Requirements 
 	Python3 – sudo apt install python3 \
