@@ -62,3 +62,4 @@ class SportsBetCollector:
 		driver.close()
 
 		return page_sources
+
