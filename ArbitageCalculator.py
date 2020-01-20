@@ -25,9 +25,9 @@ class ArbitageCalculator:
 
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
-                if(len(row)==1):
-                    game_name = row[0] 
-                    continue
+                # if(len(row)==1):
+                #     game_name = row[0] 
+                #     continue
                 bet365_names.append(row[0])
                 bet365_overOdds.append(row[1])
                 bet365_underOdds.append(row[2])
@@ -63,7 +63,7 @@ class ArbitageCalculator:
                     calc = (1/float(best_over) + 1/float(best_under)) * 100;
 
                     if (calc < 100) :
-                        print(game_name)
+                        # print(game_name)
                         print("################################") 
                         print("ARBITAGE FOUND!!! -> " , sportsbet_names[i]) 
                         print("Profit margin of -> " , round(100-calc,3))

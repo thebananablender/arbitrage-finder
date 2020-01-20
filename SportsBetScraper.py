@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import requests
 from bs4 import BeautifulSoup
 from csv import writer
@@ -12,6 +11,7 @@ class SportsBetScraper:
 
 		soup = BeautifulSoup(source, 'html.parser')
 
+		# Get all main market titles
 		titles = soup.find_all("span",{"data-automation-id":"market-group-accordion-header-title"})
 
 		for title in titles:
@@ -22,6 +22,7 @@ class SportsBetScraper:
 			if title.get_text() == "Player Rebounds Markets":
 				rebounds_Title = title
 
+		# Get the container of respective market title
 		points_Container = points_Title.find_next("div",{"data-automation-id":"market-group-accordion-container"})
 		assists_Container = assists_Title.find_next("div",{"data-automation-id":"market-group-accordion-container"})
 		rebounds_Container = rebounds_Title.find_next("div",{"data-automation-id":"market-group-accordion-container"})
@@ -29,35 +30,33 @@ class SportsBetScraper:
 		return points_Container, assists_Container, rebounds_Container
 
 
-	def write_to_csv(self, points_Container, assists_Container, rebounds_Container):
-		with open('sportsbet_Odds.csv','w') as csv_file:
-			csv_writer = writer(csv_file)
-			# csv_writer.writerow(game_name.get_text())
+	def write_to_csv(self, points_Container, assists_Container, rebounds_Container,csv_writer):
 
-			names = points_Container.find_all("span",{"data-automation-id":"accordion-header-title"})
-			odds = points_Container.find_all("span",{"data-automation-id":"price-text"})
-			points = points_Container.find_all("span",{"class":"size12_fq5j3k2"})
+		# From the container get all the names, odds and points container
+		names = points_Container.find_all("span",{"data-automation-id":"accordion-header-title"})
+		odds = points_Container.find_all("span",{"data-automation-id":"price-text"})
+		points = points_Container.find_all("span",{"class":"size12_fq5j3k2"})
 
-			count = 0
-			for i in range(len(odds)//2):
-				csv_writer.writerow([names[i].get_text()+'|P',odds[count].get_text(),odds[count + 1].get_text(),points[count].get_text()])
-				count += 2
-			
-			names = assists_Container.find_all("span",{"data-automation-id":"accordion-header-title"})
-			odds = assists_Container.find_all("span",{"data-automation-id":"price-text"})
-			points = assists_Container.find_all("span",{"class":"size12_fq5j3k2"})
-
-			count = 0
-			for i in range(len(odds)//2):
-				csv_writer.writerow([names[i].get_text()+'|A',odds[count].get_text(),odds[count + 1].get_text(),points[count].get_text()])
-				count += 2
-				
-			names = rebounds_Container.find_all("span",{"data-automation-id":"accordion-header-title"})
-			odds = rebounds_Container.find_all("span",{"data-automation-id":"price-text"})
-			points = rebounds_Container.find_all("span",{"class":"size12_fq5j3k2"})
-
-			count = 0
-			for i in range(len(odds)//2):
-				csv_writer.writerow([names[i].get_text()+'|R',odds[count].get_text(),odds[count + 1].get_text(),points[count].get_text()])
-				count += 2
+		count = 0
+		for i in range(len(odds)//2):
+			csv_writer.writerow([names[i].get_text()+'|P',odds[count].get_text(),odds[count + 1].get_text(),points[count].get_text()])
+			count += 2
 		
+		names = assists_Container.find_all("span",{"data-automation-id":"accordion-header-title"})
+		odds = assists_Container.find_all("span",{"data-automation-id":"price-text"})
+		points = assists_Container.find_all("span",{"class":"size12_fq5j3k2"})
+
+		count = 0
+		for i in range(len(odds)//2):
+			csv_writer.writerow([names[i].get_text()+'|A',odds[count].get_text(),odds[count + 1].get_text(),points[count].get_text()])
+			count += 2
+			
+		names = rebounds_Container.find_all("span",{"data-automation-id":"accordion-header-title"})
+		odds = rebounds_Container.find_all("span",{"data-automation-id":"price-text"})
+		points = rebounds_Container.find_all("span",{"class":"size12_fq5j3k2"})
+
+		count = 0
+		for i in range(len(odds)//2):
+			csv_writer.writerow([names[i].get_text()+'|R',odds[count].get_text(),odds[count + 1].get_text(),points[count].get_text()])
+			count += 2
+	

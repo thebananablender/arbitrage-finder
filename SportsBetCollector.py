@@ -3,6 +3,7 @@ from selenium.common.exceptions import NoSuchElementException
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 import time
+from selenium import webdriver
 
 class SportsBetCollector:
 
@@ -23,7 +24,11 @@ class SportsBetCollector:
 
 	def get_page_sources(self, games):
 		page_sources = []
-		driver = Chrome()
+		options = webdriver.ChromeOptions()
+		options.binary_location = r"C:\Program Files (x86)\Google\Chrome Beta\Application\chrome.exe"
+		chrome_driver_binary = r"/chromedriver.exe"
+		driver = webdriver.Chrome(chrome_driver_binary, chrome_options=options)
+
 		for game in games:
 			#Navigate to each game
 			driver.get(game)
