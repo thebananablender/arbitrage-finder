@@ -14,6 +14,11 @@ class Bet365Collector:
 	#Returns a list of page_sources. Corresponding to today's games.
 	def get_page_sources(self, games):
 		page_sources = []
+
+		# For macs uncomment next line and comment out windows
+		# driver = Chrome() 
+
+		# For windows uncomment next 4 lines and comment out macs
 		options = webdriver.ChromeOptions()
 		options.binary_location = r"C:\Program Files (x86)\Google\Chrome Beta\Application\chrome.exe"
 		chrome_driver_binary = r"/chromedriver.exe"
@@ -34,11 +39,14 @@ class Bet365Collector:
 			game.click()
 			time.sleep(2)
 
-			page_sources.append(self.get_game_page_source(driver))
+			game_page_source = self.get_game_page_source(driver)
+
+			if(game_page_source != "Player Markets Not Found"):
+				page_sources.append(game_page_source)
+				driver.back()
+				time.sleep(2)
 
 			#Returns to previous page
-			driver.back()
-			time.sleep(2)
 			driver.back()
 			time.sleep(2)
 

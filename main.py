@@ -4,6 +4,7 @@ from Bet365Collector import Bet365Collector
 from Bet365Scraper import Bet365Scraper
 from ArbitageCalculator import ArbitageCalculator
 from csv import writer
+import time
 
 if __name__ == "__main__":
 	SportBet_Source = SportsBetCollector("http://www.sportsbet.com.au/betting/basketball-us/nba-matches/")
