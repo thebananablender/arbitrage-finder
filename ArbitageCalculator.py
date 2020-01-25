@@ -25,9 +25,9 @@ class ArbitageCalculator:
 
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
-                if(len(row)==1):
-                    game_name = row[0] 
-                    continue
+                # if(len(row)==1):
+                #     game_name = row[0] 
+                #     continue
                 bet365_names.append(row[0])
                 bet365_overOdds.append(row[1])
                 bet365_underOdds.append(row[2])
@@ -47,23 +47,33 @@ class ArbitageCalculator:
             while(j < len(bet365_names)) :
                 if (sportsbet_names[i] == bet365_names[j]) :
                     games_found+=1
-                    if sportsbet_points[i] != bet365_points[j] :
-                        points_diff+=1
-                        j+=1
-                        continue
+
+                    if(sportsbet_points[i] != bet365_points[j]):
+                        if(sportsbet_overOdds > bet365_underOdds) : 
+                            points_diff+=1
+                            j+=1
+                            continue
+                        if (bet365_overOdds > sportsbet_underOdds) : 
+                            points_diff+=1
+                            j+=1
+                            continue
 
                     if sportsbet_overOdds[i] > bet365_overOdds[j] :
                         best_over = sportsbet_overOdds[i]
                         best_under = bet365_underOdds[j]
+                        overBest = "SportsBet"
+                        underBest = "Bet365"
                     else:
                         best_over = bet365_overOdds[j]
                         best_under = sportsbet_underOdds[i]
-                    
+                        overBest = "Bet365"
+                        underBest = "SportsBet"
+
                     # Arbitage formula -> https://youtu.be/TGinzvSDayU?t=333 
                     calc = (1/float(best_over) + 1/float(best_under)) * 100;
 
                     if (calc < 100) :
-                        print(game_name)
+                        # print(game_name)
                         print("################################") 
                         print("ARBITAGE FOUND!!! -> " , sportsbet_names[i]) 
                         print("Profit margin of -> " , round(100-calc,3))
@@ -74,8 +84,8 @@ class ArbitageCalculator:
                         print("\nBet365 Over " , bet365_overOdds[j])
                         print("Bet365 Under " , bet365_underOdds[j])
 
-                        print("\nBest Over " , best_over )
-                        print("Best Under " , best_under)
+                        print("\nBest Over " + overBest, best_over )
+                        print("Best Under " + underBest, best_under)
                         print("################################") 
                         arbitages_found+=1;
                     else:

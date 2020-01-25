@@ -1,3 +1,4 @@
+from selenium import webdriver
 from selenium.webdriver import Chrome
 from selenium.common.exceptions import NoSuchElementException
 from bs4 import BeautifulSoup
@@ -23,8 +24,18 @@ class SportsBetCollector:
 
 	def get_page_sources(self, games):
 		page_sources = []
-		driver = Chrome()
+
 		for game in games:
+			
+			# For macs uncomment next line and comment out windows
+			# driver = Chrome() 
+
+			# For windows uncomment next 4 lines and comment out macs
+			options = webdriver.ChromeOptions()
+			options.binary_location = r"C:\Program Files (x86)\Google\Chrome Beta\Application\chrome.exe"
+			chrome_driver_binary = r"/chromedriver.exe"
+			driver = webdriver.Chrome(chrome_driver_binary, chrome_options=options)
+			
 			#Navigate to each game
 			driver.get(game)
 			try:
@@ -56,10 +67,10 @@ class SportsBetCollector:
 				page_sources.append(driver.page_source)
 			except NoSuchElementException:
 				print("ERROR: Player markets not found.")
+				#close the browser window
+				driver.close()
 				continue
-
-		#close the browser window
-		driver.close()
-
+			driver.close()
+			
 		return page_sources
 
