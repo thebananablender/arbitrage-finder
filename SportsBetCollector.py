@@ -66,7 +66,7 @@ class SportsBetCollector:
 				#print page source to stdout
 				page_sources.append(driver.page_source)
 			except NoSuchElementException:
-				print("Game is live! Player markets not found.")
+				print("ERROR: Player markets not found.")
 				#close the browser window
 				driver.close()
 				continue
