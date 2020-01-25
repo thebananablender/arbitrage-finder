@@ -30,4 +30,4 @@ if __name__ == "__main__":
 			Bet365_Scraper.write_to_csv(points, assists, rebounds,Bet365_csv_writer)
 
 	calc = ArbitageCalculator()
-	calc.lets_go()
+	calc.lets_go_csv()

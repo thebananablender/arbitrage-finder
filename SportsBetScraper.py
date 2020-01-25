@@ -32,7 +32,7 @@ class SportsBetScraper:
 
 		return game_name, points_container, assists_container, rebounds_container
 
-	def write_to_csv(self, points_container, assists_container, rebounds_container):
+	def write_to_csv(self, points_container, assists_container, rebounds_container, csv_writer):
 		# From the container get all the names, odds and points container
 		names = points_container.find_all("span",{"data-automation-id":"accordion-header-title"})
 		odds = points_container.find_all("span",{"data-automation-id":"price-text"})
