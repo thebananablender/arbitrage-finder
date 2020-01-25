@@ -32,7 +32,7 @@ class Bet365Scraper:
 
 		return points_Container, assists_Container, rebounds_Container
 
-	def write_to_csv(self, points_Container, assists_Container, rebounds_Container,csv_writer):
+	def write_to_csv(self, points_Container, assists_Container, rebounds_Container, csv_writer):
 		
 		# Finds within player points market every players name, odds and points
 		names = points_Container.find_all(class_ = "srb-ParticipantLabelWithTeam_Name")
