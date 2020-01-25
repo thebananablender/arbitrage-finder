@@ -14,7 +14,7 @@ class SportsBetScraper:
 		soup = BeautifulSoup(source, 'html.parser')
 
 		# Get all main market titles
-		game_name = soup.find("span", {"data-automation-id":"event-participant-1"}).get_text() + ' vs. ' + soup.find("span", {"data-automation-id":"event-participant-2"}).get_text()
+		# game_name = soup.find("span", {"data-automation-id":"event-participant-1"}).get_text() + ' vs. ' + soup.find("span", {"data-automation-id":"event-participant-2"}).get_text()
 
 		titles = soup.find_all("span",{"data-automation-id":"market-group-accordion-header-title"})
 
@@ -30,7 +30,7 @@ class SportsBetScraper:
 		assists_container = assists_Title.find_next("div",{"data-automation-id":"market-group-accordion-container"})
 		rebounds_container = rebounds_Title.find_next("div",{"data-automation-id":"market-group-accordion-container"})
 
-		return game_name, points_container, assists_container, rebounds_container
+		return points_container, assists_container, rebounds_container
 
 	def write_to_csv(self, points_container, assists_container, rebounds_container, csv_writer):
 		# From the container get all the names, odds and points container
