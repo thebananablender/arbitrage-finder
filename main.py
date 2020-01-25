@@ -8,7 +8,7 @@ if __name__ == "__main__":
 	scraper = SportsBetScraper(collector.get_page_sources(games))
 	
 	for source in scraper.sources:
-		points, assists, rebounds = scraper.scrape_data(source)
+		name, points, assists, rebounds = scraper.scrape_data(source)
 		scraper.write_to_csv(points, assists, rebounds)
 
 	#TODO:
