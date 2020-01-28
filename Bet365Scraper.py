@@ -39,7 +39,7 @@ class Bet365Scraper:
 		odds = points_Container.find_all(class_ = "gl-ParticipantCenteredStacked_Odds")
 		points = points_Container.find_all(class_ = "gl-ParticipantCenteredStacked_Handicap")
 
-		# Writes to csv files: names|market,Over odds,Under odds, points.
+		# Writes to csv files: names|market, Over odds, Under odds, points.
 		count = 0
 		for i in range(len(odds)//2):
 			csv_writer.writerow([names[i].get_text()+'|P',odds[count].get_text(),odds[len(odds)//2 + count].get_text(),points[count].get_text()])

@@ -1,5 +1,5 @@
 import csv
-
+budget = 800
 class ArbitageCalculator:
     def lets_go_csv(self):
         sportsbet_names = []
@@ -78,9 +78,19 @@ class ArbitageCalculator:
 
                         # print("\nBet365 Over " , bet365_overOdds[j])
                         # print("Bet365 Under " , bet365_underOdds[j])
+                        print("\nWith budget of $"+str(budget))
 
-                        print("\nBest Over " + overBest, best_over )
-                        print("Best Under " + underBest, best_under)
+                        # Unbiased formula - amountToBet = budget/(odd1/odd2 + 1) -> http://www.aussportsbetting.com/guide/sports-betting-arbitrage/
+                        print("\nBest Over " + overBest, best_over,"-> $"+ str(round((budget/((float(best_over)/float(best_under))+1)),2)))
+                        print("Best Under " + underBest, best_under,"-> $" + str(round((budget/((float(best_under)/float(best_over))+1)),2)))
+                        
+                        # Over Biased
+                        # print("\nBest Over " + overBest, best_over,"-> $"+ str(round((budget-budget/float(best_under)),2)))
+                        # print("Best Under " + underBest, best_under,"-> $" + str(round(budget/float(best_under),2)))
+
+                        # Under Biased
+                        # print("\nBest Over " + overBest, best_over,"-> $"+ str(round(budget/float(best_over),2)))
+                        # print("Best Under " + underBest, best_under,"-> $" + str(round((budget-budget/float(best_over)),2)))
                         print("################################") 
                         arbitages_found+=1;
                     else:
