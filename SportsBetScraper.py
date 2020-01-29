@@ -3,7 +3,6 @@ import json
 from bs4 import BeautifulSoup
 from csv import writer
 
-
 class SportsBetScraper:
 
 	def __init__(self, sources):
