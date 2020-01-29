@@ -73,11 +73,10 @@ class ArbitageCalculator:
                         print("ARBITAGE FOUND!!! -> " , sportsbet_names[i]) 
                         print("Profit margin of -> " , round(100-calc,3))
 
-                        # print("\nSportsbet Over " , sportsbet_overOdds[i]) 
-                        # print("Sportsbet Under " , sportsbet_underOdds[i])
+                        # These two are required for when we properly implment overlapping arbitage finder
+                        # print("\nSportsbet Points " , sportsbet_points[i]) 
+                        # print("\nBet365 Points " , bet365_points[j])
 
-                        # print("\nBet365 Over " , bet365_overOdds[j])
-                        # print("Bet365 Under " , bet365_underOdds[j])
                         print("\nWith budget of $"+str(budget))
 
                         # Unbiased formula - amountToBet = budget/(odd1/odd2 + 1) -> http://www.aussportsbetting.com/guide/sports-betting-arbitrage/
