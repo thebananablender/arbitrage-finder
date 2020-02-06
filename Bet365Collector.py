@@ -12,17 +12,20 @@ class Bet365Collector:
 		self.url = url
 
 	#Returns a list of page_sources. Corresponding to today's games.
-	def get_page_sources(self, games):
+	def get_page_sources(self, games, os):
 		page_sources = []
-
-		# For macs uncomment next line and comment out windows
-		# driver = Chrome() 
-
-		# For windows uncomment next 4 lines and comment out macs
-		options = webdriver.ChromeOptions()
-		options.binary_location = r"C:\Program Files (x86)\Google\Chrome Beta\Application\chrome.exe"
-		chrome_driver_binary = r"/chromedriver.exe"
-		driver = webdriver.Chrome(chrome_driver_binary, chrome_options=options)
+		try:
+			if os == 'MAC':
+				driver = Chrome() 
+			elif os == 'WIN':
+				options = webdriver.ChromeOptions()
+				options.binary_location = r"C:\Program Files (x86)\Google\Chrome Beta\Application\chrome.exe"
+				chrome_driver_binary = r"/chromedriver.exe"
+				driver = webdriver.Chrome(chrome_driver_binary, chrome_options=options)
+			else:
+				raise ValueError
+		except ValueError:
+			print('Please specify MAC or WIN in the cmd line arguments')
 
 		driver.get(self.url)
 		time.sleep(3)
@@ -78,5 +81,5 @@ class Bet365Collector:
 			return driver.page_source
 
 		except NoSuchElementException:
-			print("Player Markets Not Found")
+			print("ERROR: Player Markets Not Found")
 			return "Player Markets Not Found"
