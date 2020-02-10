@@ -1,6 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver import Chrome
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import WebDriverException
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 import time
@@ -28,7 +32,9 @@ class SportsBetCollector:
 		for game in games:
 			try:
 				if os == 'MAC':
-					driver = Chrome() 
+					driver = Chrome()
+					driver.implicitly_wait(10)
+					wait = WebDriverWait(driver, 10)
 				elif os == 'WIN':
 					options = webdriver.ChromeOptions()
 					options.binary_location = r"C:\Program Files (x86)\Google\Chrome Beta\Application\chrome.exe"
@@ -45,27 +51,30 @@ class SportsBetCollector:
 			try:
 				#Click on 'Player Points Markets' accordion, and the individual player accordions
 				driver.find_element_by_xpath("//span[contains(text(), 'Player Points Markets')]").click()
-				time.sleep(1)
-				points = driver.find_elements_by_xpath("//span[contains(text(), ' - Points')]")
+				points_container = self.get_container(driver, '- Points')
+				points = self.get_markets(points_container, '- Points')
 				for e in points:
 					e.click()
-					time.sleep(1)
+					wait.until(lambda e: e.find_element_by_xpath(".//div[@data-automation-id='accordion-content']/div").text != "")
+					time.sleep(.3)
 
 				#Click on 'Player Rebounds Markets' accordion, and the individual player accordions
 				driver.find_element_by_xpath("//span[contains(text(), 'Player Rebounds Markets')]").click()
-				time.sleep(1)
-				rebounds = driver.find_elements_by_xpath("//span[contains(text(), ' - Rebounds')]")
+				rebounds_container = self.get_container(driver, '- Rebounds')
+				rebounds = self.get_markets(rebounds_container, '- Rebounds')
 				for e in rebounds:
 					e.click()
-					time.sleep(1)
+					wait.until(lambda e: e.find_element_by_xpath(".//div[@data-automation-id='accordion-content']/div").text != "")
+					time.sleep(.3)
 
 				#Click on 'Player Assists Markets' accordion, and the individual player accordions
 				driver.find_element_by_xpath("//span[contains(text(), 'Player Assists Markets')]").click()
-				time.sleep(1)
-				assists = driver.find_elements_by_xpath("//span[contains(text(), ' - Assists')]")
+				assists_container = self.get_container(driver, '- Assists')
+				assists = self.get_markets(assists_container, '- Assists')
 				for e in assists:
 					e.click()
-					time.sleep(1)
+					wait.until(lambda e: e.find_element_by_xpath(".//div[@data-automation-id='accordion-content']/div").text != "")
+					time.sleep(.3)
 
 				#print page source to stdout
 				page_sources.append(driver.page_source)
@@ -77,4 +86,24 @@ class SportsBetCollector:
 			driver.close()
 			
 		return page_sources
+
+	def get_markets(self, container, type):
+		market = []
+		items = container.find_elements_by_xpath(".//div[starts-with(@class, 'accordionItemDesktop')]")
+		for item in items:
+			if type in item.text:
+				market.append(item)
+
+		return market
+
+	def get_container(self, driver, type):
+		markets = driver.find_elements_by_xpath("//div[@data-automation-id='market-group-accordion-container']")
+		for market in markets:
+			if type in market.text:
+				return market
+
+		return False
+
+
+
 
