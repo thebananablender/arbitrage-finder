@@ -22,20 +22,24 @@ class SportsBetCollector:
 
 		return games
 
-	def get_page_sources(self, games):
+	def get_page_sources(self, games, os):
 		page_sources = []
 
 		for game in games:
-			
-			# For macs uncomment next line and comment out windows
-			# driver = Chrome() 
+			try:
+				if os == 'MAC':
+					driver = Chrome() 
+				elif os == 'WIN':
+					options = webdriver.ChromeOptions()
+					options.binary_location = r"C:\Program Files (x86)\Google\Chrome Beta\Application\chrome.exe"
+					chrome_driver_binary = r"/chromedriver.exe"
+					driver = webdriver.Chrome(chrome_driver_binary, chrome_options=options)
+				else:
+					raise ValueError
+			except ValueError:
+				print('ERROR: Please specify either MAC or WIN in the cmd line arguments')
+				return
 
-			# For windows uncomment next 4 lines and comment out macs
-			options = webdriver.ChromeOptions()
-			options.binary_location = r"C:\Program Files (x86)\Google\Chrome Beta\Application\chrome.exe"
-			chrome_driver_binary = r"/chromedriver.exe"
-			driver = webdriver.Chrome(chrome_driver_binary, chrome_options=options)
-			
 			#Navigate to each game
 			driver.get(game)
 			try:
