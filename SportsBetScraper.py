@@ -1,10 +1,8 @@
-import requests
-import json
 from bs4 import BeautifulSoup
-from csv import writer
+from Scraper import Scraper
 
 
-class SportsBetScraper:
+class SportsBetScraper(Scraper):
 
 	def __init__(self, sources):
 		self.sources = sources
@@ -26,42 +24,41 @@ class SportsBetScraper:
 			if title.get_text() == "Player Rebounds Markets":
 				rebounds_Title = title
 
-		points_container = points_Title.find_next("div",{"data-automation-id":"market-group-accordion-container"})
-		assists_container = assists_Title.find_next("div",{"data-automation-id":"market-group-accordion-container"})
-		rebounds_container = rebounds_Title.find_next("div",{"data-automation-id":"market-group-accordion-container"})
+		self.points_container = points_Title.find_next("div",{"data-automation-id":"market-group-accordion-container"})
+		self.assists_container = assists_Title.find_next("div",{"data-automation-id":"market-group-accordion-container"})
+		self.rebounds_container = rebounds_Title.find_next("div",{"data-automation-id":"market-group-accordion-container"})
 
-		return points_container, assists_container, rebounds_container
 
-	def write_to_csv(self, points_container, assists_container, rebounds_container, csv_writer):
+	def write_to_csv(self, csv_writer):
 		# From the container get all the names, odds and points container
-		names = points_container.find_all("span",{"data-automation-id":"accordion-header-title"})
-		odds = points_container.find_all("span",{"data-automation-id":"price-text"})
-		points = points_container.find_all("span",{"class":"size12_fq5j3k2"})
+		names = self.points_container.find_all("span",{"data-automation-id":"accordion-header-title"})
+		odds = self.points_container.find_all("span",{"data-automation-id":"price-text"})
+		points = self.points_container.find_all("span",{"class":"size12_fq5j3k2"})
 
 		count = 0
 		for i in range(len(odds)//2):
 			csv_writer.writerow([names[i].get_text()+'|P',odds[count].get_text(),odds[count + 1].get_text(),points[count].get_text()])
 			count += 2
 		
-		names = assists_container.find_all("span",{"data-automation-id":"accordion-header-title"})
-		odds = assists_container.find_all("span",{"data-automation-id":"price-text"})
-		points = assists_container.find_all("span",{"class":"size12_fq5j3k2"})
+		names = self.assists_container.find_all("span",{"data-automation-id":"accordion-header-title"})
+		odds = self.assists_container.find_all("span",{"data-automation-id":"price-text"})
+		points = self.assists_container.find_all("span",{"class":"size12_fq5j3k2"})
 
 		count = 0
 		for i in range(len(odds)//2):
 			csv_writer.writerow([names[i].get_text()+'|A',odds[count].get_text(),odds[count + 1].get_text(),points[count].get_text()])
 			count += 2
 			
-		names = rebounds_container.find_all("span",{"data-automation-id":"accordion-header-title"})
-		odds = rebounds_container.find_all("span",{"data-automation-id":"price-text"})
-		points = rebounds_container.find_all("span",{"class":"size12_fq5j3k2"})
+		names = self.rebounds_container.find_all("span",{"data-automation-id":"accordion-header-title"})
+		odds = self.rebounds_container.find_all("span",{"data-automation-id":"price-text"})
+		points = self.rebounds_container.find_all("span",{"class":"size12_fq5j3k2"})
 
 		count = 0
 		for i in range(len(odds)//2):
 			csv_writer.writerow([names[i].get_text()+'|R',odds[count].get_text(),odds[count + 1].get_text(),points[count].get_text()])
 			count += 2
 
-	def write_to_json(self, game_name, points_container, assists_container, rebounds_container):
+	def write_to_json(self, game_name):
 
 		#initialize the json and different markets lists
 		game_json = {'game': game_name}
@@ -70,7 +67,7 @@ class SportsBetScraper:
 		rebounds_markets = []
 
 		#For each points market, make a market dictionary and fill in the data. At the end, append the dictionary to the points_markets array
-		for tile in points_container.find_all('div', attrs={'data-automation-id': lambda x: x and x.endswith('-market-item')}):
+		for tile in self.points_container.find_all('div', attrs={'data-automation-id': lambda x: x and x.endswith('-market-item')}):
 			market = {}
 			name = tile.find('span', {'data-automation-id':'accordion-header-title'}, text=lambda x: x and x.endswith('- Points'))
 			if name is not None:
@@ -85,7 +82,7 @@ class SportsBetScraper:
 				points_markets.append(market)
 
 		#For each assists market, make a market dictionary and fill in the data. At the end, append the dictionary to the assists_markets array
-		for tile in assists_container.find_all('div', attrs={'data-automation-id': lambda x: x and x.endswith('-market-item')}):
+		for tile in self.assists_container.find_all('div', attrs={'data-automation-id': lambda x: x and x.endswith('-market-item')}):
 			market = {}
 			name = tile.find('span', {'data-automation-id':'accordion-header-title'},text=lambda x: x and x.endswith('- Assists'))
 			if name is not None:
@@ -100,7 +97,7 @@ class SportsBetScraper:
 				assists_markets.append(market)
 
 		#For each rebounds market, make a market dictionary and fill in the data. At the end, append the dictionary to the rebounds_markets array
-		for tile in rebounds_container.find_all('div', attrs={'data-automation-id': lambda x: x and x.endswith('-market-item')}):
+		for tile in self.rebounds_container.find_all('div', attrs={'data-automation-id': lambda x: x and x.endswith('-market-item')}):
 			market = {}
 			name = tile.find('span', {'data-automation-id':'accordion-header-title'},text=lambda x: x and x.endswith('- Rebounds'))
 			if name is not None:
