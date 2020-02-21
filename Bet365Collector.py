@@ -4,82 +4,76 @@ from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 import time
 from selenium import webdriver
+from Collector import Collector
 
 #Class Retrieves page_source from Bet365 websites
-class Bet365Collector:
+class Bet365Collector(Collector):
 	#Input: URL of sport
-	def __init__(self, url):
+	def __init__(self, url, os):
 		self.url = url
-
-	#Returns a list of page_sources. Corresponding to today's games.
-	def get_page_sources(self, games, os):
-		page_sources = []
 		try:
 			if os == 'MAC':
-				driver = Chrome() 
+				self.driver = Chrome()
+				self.driver.implicitly_wait(10)
 			elif os == 'WIN':
 				options = webdriver.ChromeOptions()
 				options.binary_location = r"C:\Program Files (x86)\Google\Chrome Beta\Application\chrome.exe"
 				chrome_driver_binary = r"/chromedriver.exe"
-				driver = webdriver.Chrome(chrome_driver_binary, chrome_options=options)
+				self.driver = webdriver.Chrome(chrome_driver_binary, chrome_options=options)
 			else:
 				raise ValueError
 		except ValueError:
 			print('Please specify MAC or WIN in the cmd line arguments')
 
-		driver.get(self.url)
-		time.sleep(3)
+	#Returns a list of page_sources. Corresponding to today's games.
+	def get_games(self):
+		game_urls = []
+		self.driver.get(self.url)
+		time.sleep(1)
 
 		#Retrieves all game links
-		games = driver.find_elements_by_class_name("sl-CouponParticipantGameLineTwoWay_NameText")
+		games = len(self.driver.find_elements_by_class_name("sl-CouponParticipantGameLineTwoWay_NameText"))
 
 		#Travels to each game
-		i = 0
-		while i < len(games):
-			games = driver.find_elements_by_class_name("sl-CouponParticipantGameLineTwoWay_NameText")
-			game = games[i];
-			i += 2
-			game.click()
-			time.sleep(2)
+		for i in range(0, games, 2):
+			self.driver.find_elements_by_class_name("sl-CouponParticipantGameLineTwoWay_NameText")[i].click()
+			game_urls.append(self.driver.current_url)
+			self.driver.back()
 
-			game_page_source = self.get_game_page_source(driver)
+		self.games = game_urls
 
-			if(game_page_source != "Player Markets Not Found"):
-				page_sources.append(game_page_source)
-				driver.back()
-				time.sleep(2)
-
-			#Returns to previous page
-			driver.back()
-			time.sleep(2)
-
-		return page_sources
-
-	def get_game_page_source(self, driver):
-		try:
-			#Tries to find the player-market tab
-			driver.find_element_by_xpath("//div[contains(text(), 'Player Markets')]").click()
-			time.sleep(2)
-
-			#Tries to ppen assists, rebounds and all show all dropdowns
+	def get_page_sources(self):
+		page_sources = []
+		for game in self.games:
+			self.driver.get(game)
+			time.sleep(1)
 			try:
-				driver.find_element_by_xpath("//div[contains(text(), 'Player Assists')]").click()
-				time.sleep(3)
+				#Tries to find the player-market tab
+				self.driver.find_element_by_xpath("//div[contains(text(), 'Player Markets')]").click()
 
-				driver.find_element_by_xpath("//div[contains(text(), 'Player Rebounds')]").click()
-				time.sleep(3)
+				#Tries to open assists, rebounds and all show all dropdowns
+				try:
+					self.driver.find_element_by_xpath("//div[contains(text(), 'Player Assists')]").click()
+					time.sleep(1)
 
-				showMoreDropdowns = driver.find_elements_by_class_name("msl-ShowMore")
-				for dropdown in showMoreDropdowns:
-					dropdown.click()
-					time.sleep(3)
+					self.driver.find_element_by_xpath("//div[contains(text(), 'Player Rebounds')]").click()
+					time.sleep(1)
+
+					showMoreDropdowns = self.driver.find_elements_by_class_name("msl-ShowMore")
+					for dropdown in showMoreDropdowns:
+						dropdown.click()
+						time.sleep(1)
+
+				except NoSuchElementException:
+					print("ERROR: Either assist, rebound was not found. Exporting data anyway")
 
 			except NoSuchElementException:
-				print("Either assist, rebound was not found. Exporting data anyway")
+				print("ERROR: Player Markets Not Found")
+				self.driver.close()
+				continue
 
-			#Returns the page source
-			return driver.page_source
+			# appends the page source
+			page_sources.append(self.driver.page_source)
 
-		except NoSuchElementException:
-			print("ERROR: Player Markets Not Found")
-			return "Player Markets Not Found"
+		self.driver.close()
+		return page_sources
