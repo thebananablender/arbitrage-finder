@@ -1,4 +1,10 @@
 from abc import ABC, abstractmethod
+from selenium import webdriver
+from selenium.webdriver import Chrome
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
+import time
 
 class Collector(ABC):
 

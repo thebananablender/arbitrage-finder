@@ -1,5 +1,6 @@
-from bs4 import BeautifulSoup
 from Scraper import Scraper
+from bs4 import BeautifulSoup
+
 
 
 class SportsBetScraper(Scraper):
@@ -39,7 +40,7 @@ class SportsBetScraper(Scraper):
 		for i in range(len(odds)//2):
 			csv_writer.writerow([names[i].get_text()+'|P',odds[count].get_text(),odds[count + 1].get_text(),points[count].get_text()])
 			count += 2
-		
+
 		names = self.assists_container.find_all("span",{"data-automation-id":"accordion-header-title"})
 		odds = self.assists_container.find_all("span",{"data-automation-id":"price-text"})
 		points = self.assists_container.find_all("span",{"class":"size12_fq5j3k2"})
@@ -48,7 +49,7 @@ class SportsBetScraper(Scraper):
 		for i in range(len(odds)//2):
 			csv_writer.writerow([names[i].get_text()+'|A',odds[count].get_text(),odds[count + 1].get_text(),points[count].get_text()])
 			count += 2
-			
+
 		names = self.rebounds_container.find_all("span",{"data-automation-id":"accordion-header-title"})
 		odds = self.rebounds_container.find_all("span",{"data-automation-id":"price-text"})
 		points = self.rebounds_container.find_all("span",{"class":"size12_fq5j3k2"})
@@ -115,5 +116,5 @@ class SportsBetScraper(Scraper):
 		game_json['points_markets'] = points_markets
 		game_json['assists_markets'] = assists_markets
 		game_json['rebounds_markets'] = rebounds_markets
-		
+
 		return game_json

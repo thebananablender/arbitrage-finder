@@ -1,7 +1,7 @@
-
+from Scraper import Scraper
 from bs4 import BeautifulSoup
 
-class Bet365Scraper:
+class Bet365Scraper(Scraper):
 
 	def __init__(self, sources):
 		self.sources = sources
