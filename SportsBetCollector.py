@@ -7,21 +7,18 @@ class SportsBetCollector(Collector):
 		try:
 			if os == 'MAC':
 				opts = Options()
-				opts.add_argument("--disable-impl-side-painting")
-				opts.add_argument("--no-sandbox")
 				opts.add_experimental_option("excludeSwitches", ["enable-automation"])
 				opts.add_experimental_option('useAutomationExtension', False)
+				opts.add_argument('user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36')
 				opts.headless = True
 				self.driver = Chrome(chrome_options=opts)
 				self.driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
 					"source": """
 				    Object.defineProperty(navigator, 'webdriver', {
-				      get: () => undefined
+				      get: () => false
 				    })
 				  """
 				})
-				self.driver.execute_cdp_cmd("Network.enable", {})
-				self.driver.execute_cdp_cmd("Network.setExtraHTTPHeaders", {"headers": {"User-Agent": "browser1"}})
 				self.driver.implicitly_wait(5)
 				self.wait = WebDriverWait(self.driver, 5)
 			elif os == 'WIN':
@@ -37,9 +34,6 @@ class SportsBetCollector(Collector):
 
 	#Returns the URL for every game given the URL of the sport from sportsbet
 	def get_games(self):
-		# req = Request(self.url, headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36'})
-		# html_page = urlopen(req)
-		# soup = BeautifulSoup(html_page, "html.parser")
 		self.driver.get(self.url)
 		games = []
 
@@ -51,11 +45,13 @@ class SportsBetCollector(Collector):
 	def get_page_sources(self):
 		page_sources = []
 
-		for game in self.games:
-			print("game")
-
+		for game in tqdm(self.games):
 			#Navigate to each game
-			self.driver.get(game)
+			try:
+				self.driver.get(game)
+			except InvalidSessionIdException:
+				print("ERROR: Invalid session ID. Usually caused by attempting to scrape live games")
+				continue
 			try:
 				# Click on 'Player Points Markets' accordion, and the individual player accordions
 				self.driver.find_element_by_xpath("//span[contains(text(), 'Player Points Markets')]").click()
@@ -88,24 +84,6 @@ class SportsBetCollector(Collector):
 		self.driver.close()
 			
 		return page_sources
-
-	# def get_markets(self, container, type):
-	# 	market = []
-	# 	items = container.find_elements_by_xpath(".//div[starts-with(@class, 'accordionItemDesktop')]")
-	# 	for item in items:
-	# 		if type in item.text:
-	# 			market.append(item)
-	#
-	# 	return market
-	#
-	# def get_container(self, driver, type):
-	# 	time.sleep(1)
-	# 	markets = driver.find_elements_by_xpath("//div[@data-automation-id='market-group-accordion-container']")
-	# 	for market in markets:
-	# 		if type in market.text:
-	# 			return market
-	# 	return False
-
 
 
 

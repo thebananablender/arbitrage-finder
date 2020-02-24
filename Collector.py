@@ -4,7 +4,10 @@ from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import InvalidSessionIdException
+from tqdm import tqdm
 import time
+
 
 class Collector(ABC):
 

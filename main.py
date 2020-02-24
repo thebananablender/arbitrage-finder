@@ -6,72 +6,58 @@ from ArbitageCalculator import ArbitageCalculator
 from csv import writer
 import pickle
 import sys
+import json
 
 def main():
 
 	if sys.argv[2] == '--testing':
+		games = {}
 		#testing config - use pre-saved data
 		sb_source = pickle.load(open('testdata/sportsbet_sources_test.pkl', 'rb'))
-		SportBet_Scraper = SportsBetScraper(sb_source)
+		sb_scraper = SportsBetScraper(sb_source)
 
-		with open('sportsbet_Odds.csv', 'w') as sportsbet_csv_file:
-			sportsbet_csv_writer = writer(sportsbet_csv_file)
-
-			for source in SportBet_Scraper.sources:
-				SportBet_Scraper.scrape_data(source)
-				SportBet_Scraper.write_to_csv(sportsbet_csv_writer)
+		for source in sb_scraper.sources:
+			sb_scraper.scrape_data(source)
+			games.update(sb_scraper.write_to_json())
 
 		b365_source = pickle.load(open('testdata/bet365_sources_test.pkl', 'rb'))
-		Bet365_Scraper = Bet365Scraper(b365_source)
+		b365_scraper = Bet365Scraper(b365_source)
 
-		with open('bet365_Odds.csv', 'w') as Bet365_csv_file:
-			Bet365_csv_writer = writer(Bet365_csv_file)
-
-			for source in Bet365_Scraper.sources:
-				Bet365_Scraper.scrape_data(source)
-				Bet365_Scraper.write_to_csv(Bet365_csv_writer)
+		for source in b365_scraper.sources:
+			b365_scraper.scrape_data(source)
+			games = b365_scraper.write_to_json(games)
 
 		calc = ArbitageCalculator()
-		calc.lets_go_csv()
+		calc.calc_json(games)
 
 	elif sys.argv[2] == '--dev':
 		#development config
-		try:
-			SportBet_Source = SportsBetCollector("http://www.sportsbet.com.au/betting/basketball-us/nba-matches/", sys.argv[1])
-		except IndexError:
-			print("ERROR: No OS argument provided.")
-			return
-
-		SportBet_Source.get_games()
-		sources = SportBet_Source.get_page_sources()
-		SportBet_Scraper = SportsBetScraper(sources)
-
-		with open('sportsbet_Odds.csv','w') as sportsbet_csv_file:
-			sportsbet_csv_writer = writer(sportsbet_csv_file)
-
-			for source in SportBet_Scraper.sources:
-				SportBet_Scraper.scrape_data(source)
-				SportBet_Scraper.write_to_csv(sportsbet_csv_writer)
-
-		try:
-			Bet365_Source = Bet365Collector("https://www.bet365.com.au/#/AC/B18/C20604387/D48/E1453/F10/", sys.argv[1])
-		except IndexError:
-			print("ERROR: No OS argument provided.")
-			return
-
-		Bet365_Source.get_games()
-		sources = Bet365_Source.get_page_sources()
-		Bet365_Scraper = Bet365Scraper(sources)
-
-		with open('bet365_Odds.csv','w') as Bet365_csv_file:
-			Bet365_csv_writer = writer(Bet365_csv_file)
-
-			for source in Bet365_Scraper.sources:
-				Bet365_Scraper.scrape_data(source)
-				Bet365_Scraper.write_to_csv(Bet365_csv_writer)
-
+		games = {}
 		calc = ArbitageCalculator()
-		calc.lets_go_csv()
+		try:
+			sb_source = SportsBetCollector("http://www.sportsbet.com.au/betting/basketball-us/nba-matches/", sys.argv[1])
+			b365_source = Bet365Collector("https://www.bet365.com.au/#/AC/B18/C20604387/D48/E1453/F10/", sys.argv[1])
+		except IndexError:
+			print("ERROR: No OS argument provided.")
+			return
+
+		sb_source.get_games()
+		sources = sb_source.get_page_sources()
+		sb_scraper = SportsBetScraper(sources)
+
+		for source in sb_scraper.sources:
+			sb_scraper.scrape_data(source)
+			games.update(sb_scraper.write_to_json())
+
+		b365_source.get_games()
+		sources = b365_source.get_page_sources()
+		b365_scraper = Bet365Scraper(sources)
+
+		for source in b365_scraper.sources:
+			b365_scraper.scrape_data(source)
+			games = b365_scraper.write_to_json(games)
+
+		calc.calc_json(games)
 
 if __name__ == "__main__":
 	main()

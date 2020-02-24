@@ -93,4 +93,20 @@ class ArbitageCalculator:
         print("Games with different points:" , points_diff)
         print("Not arbitages:" , not_arbitage)
 
-    # def lets_go_json(self):
+    def calc_json(self, games):
+        for game in games.values():
+            for market, market_type in game.items():
+                for player, points in market_type.items():
+                    for point, positions in points.items():
+                        if len(positions['over']) < 2 or len(positions['under']) < 2:
+                            continue
+                        best_over = max(positions['over']['sportsbet'], positions['over']['b365'])
+                        best_under = max(positions['under']['sportsbet'], positions['under']['b365'])
+                        bom = (1/float(best_under) + 1/float(best_over)) * 100
+                        if bom < 100:
+                            print("Arbitrage found! {} to score over {} {} at {} ({}) and under {} {} at {} ({}). {}% profit margin"
+                                .format(player, point, market.split('_')[0], best_over,'Sportsbet' if best_over == positions['over']['sportsbet'] else 'Bet365',
+                                point ,market.split('_')[0], best_under,'Sportsbet' if best_under == positions['under']['sportsbet'] else 'Bet365', round(100-bom,3)))
+
+
+
